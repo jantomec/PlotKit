@@ -99,6 +99,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             let attrString = NSAttributedString(string: $0.description)
             let textLine = CTLineCreateWithAttributedString(attrString)
             let labelSize = CTLineGetImageBounds(textLine, ctx)
+            print(labelSize)
             ctx.textPosition = CGPoint(
                 x: origin.x - labelSize.width-4,
                 y: CGPoint(x: 0, y: $0).applying(transform).y - labelSize.height/2
