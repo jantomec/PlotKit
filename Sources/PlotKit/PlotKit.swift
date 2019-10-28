@@ -22,14 +22,14 @@ public func plot(x: [CGFloat], y: [CGFloat]) {
     let tx: CGFloat
     let ty: CGFloat
     if let xmin = x.min(), let xmax = x.max() {
-        sx = (xmax - xmin)*size.width
+        sx = size.width/(xmax - xmin)
         tx = 0
     } else {
         sx = 1
         tx = 0
     }
     if let ymin = y.min(), let ymax = y.max() {
-        sy = (ymax - ymin)/size.height
+        sy = size.height/(ymax - ymin)
         ty = 0
     } else {
         sy = 1
