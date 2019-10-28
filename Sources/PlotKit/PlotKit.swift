@@ -1,8 +1,7 @@
 import CoreGraphics
 
-public func plot(x: [CGFloat], y: [CGFloat]) -> CGImage? {
+public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     
-    let size = CGSize(width: 75, height: 75)
     let bitsPerComponent = 8
     let bytesPerRow = 0 // 0 means automatic calculation if data == nil
     let colorSpace = CGColorSpaceCreateDeviceRGB()
@@ -15,7 +14,6 @@ public func plot(x: [CGFloat], y: [CGFloat]) -> CGImage? {
                                   bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
     
     let points = x.indices.map { CGPoint(x: x[$0], y: y[$0]) }
-    print(points)
     
     let sx: CGFloat
     let sy: CGFloat
