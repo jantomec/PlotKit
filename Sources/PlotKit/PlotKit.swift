@@ -51,26 +51,27 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
         let (xticks, yticks) = ticks(dataX: x, y: y)
         
         xticks.forEach {
+            // tick
             ctx.move(to: CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y))
             ctx.addLine(to: CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y+6))
             ctx.strokePath()
-            
-//            NSString(string: $0.description).draw(in: CGRect(center: .zero, size: .zero),
-//                                                  withAttributes: [:]
-//            )
-            
-//            let rect = CGRect(center: CGPoint(x: $0, y: origin.y-6),
-//                              size: CGSize(width: 30, height: 10))
+            // tick label
             let attrString = NSAttributedString(string: $0.description)
             let textLine = CTLineCreateWithAttributedString(attrString)
-            ctx.textPosition = CGPoint(x: $0, y: origin.y-6)
+            ctx.textPosition = CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y)
             CTLineDraw(textLine, ctx)
             
         }
         yticks.forEach {
+            // tick
             ctx.move(to: CGPoint(x: origin.x, y: CGPoint(x: 0, y: $0).applying(transform).y))
             ctx.addLine(to: CGPoint(x: origin.x+6, y: CGPoint(x: 0, y: $0).applying(transform).y))
             ctx.strokePath()
+            // tick label
+            let attrString = NSAttributedString(string: $0.description)
+            let textLine = CTLineCreateWithAttributedString(attrString)
+            ctx.textPosition = CGPoint(x: origin.x, y: CGPoint(x: 0, y: $0).applying(transform).y)
+            CTLineDraw(textLine, ctx)
         }
         
     }
