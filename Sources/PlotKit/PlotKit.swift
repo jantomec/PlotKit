@@ -1,6 +1,6 @@
 import CoreGraphics
 
-public func plot<T: Numeric>(x: [T], y: [T]) {
+public func plot(x: [Double], y: [Double]) {
     
     let size = CGSize(width: 100, height: 100)
     let bitsPerComponent = 8
