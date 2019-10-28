@@ -19,9 +19,12 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     
     let annotationColor = CGColor(colorSpace: colorSpace, components: [0, 0, 0, 1])!
     let plotColor = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
-    let annotationFont = CGFont(NSString(string: "Arial"))!
-    let fontSize: CGFloat = 18
-//    let tickLabelTextAttrs: [NSAttributedString.Key : Any] = [NSAttributedString.]
+//    let annotationFont = CGFont(NSString(string: "Arial"))!
+//    let fontSize: CGFloat = 18
+    let tickLabelTextAttrs: [NSString : AnyObject] = [
+//        kCTFontAttributeName:  maxSize,
+        kCTFontSizeAttribute: NSNumber(value: 18.0)
+    ]
     
     // ANNOTATIONS - labels, legends, ticks...
     let (xticks, yticks) = ticks(dataX: x, y: y)
@@ -87,7 +90,6 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             )
             ctx.setFont(CGFont(NSString(string: "Courier"))!)
             ctx.setFontSize(40)
-            ctx.setTextDrawingMode(.stroke)
             CTLineDraw(textLine, ctx)
             
         }
@@ -98,6 +100,9 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             ctx.strokePath()
             // tick label
             let attrString = NSAttributedString(string: $0.description)
+            CFAttributedStringCreate(kCFAllocatorDefault,
+                                     NSString(string: $0.description),
+                                     tickLabelTextAttrs as CFDictionary)
             let textLine = CTLineCreateWithAttributedString(attrString)
             let labelSize = CTLineGetImageBounds(textLine, ctx)
             ctx.textPosition = CGPoint(
