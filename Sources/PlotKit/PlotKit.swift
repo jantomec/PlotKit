@@ -1,3 +1,5 @@
+import CoreText
+import Foundation
 import CoreGraphics
 
 public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
@@ -17,15 +19,18 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     
     let transform = fitTransform(dataX: x, y: y, size: size)
     
-    // COLORS
+    // PREFERENCES - colors, fonts, ...
     
     let annotationColor = CGColor(colorSpace: colorSpace, components: [0, 0, 0, 1])!
     let plotColor = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
+    //let annotationFont = CGFont(CFString("Arial"))
     
     // AXES
     
     bitmapContext?.setFillColor(annotationColor)
     bitmapContext?.setStrokeColor(annotationColor)
+    //bitmapContext?.setFont(annotationFont)
+    
     
     if let ctx = bitmapContext {
         
@@ -48,12 +53,25 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
         xticks.forEach {
             ctx.move(to: CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y))
             ctx.addLine(to: CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y+6))
+            ctx.strokePath()
+            
+//            NSString(string: $0.description).draw(in: CGRect(center: .zero, size: .zero),
+//                                                  withAttributes: [:]
+//            )
+            
+//            let rect = CGRect(center: CGPoint(x: $0, y: origin.y-6),
+//                              size: CGSize(width: 30, height: 10))
+            let attrString = NSAttributedString(string: $0.description)
+            let textLine = CTLineCreateWithAttributedString(attrString)
+            ctx.textPosition = CGPoint(x: $0, y: origin.y-6)
+            CTLineDraw(textLine, ctx)
+            
         }
         yticks.forEach {
             ctx.move(to: CGPoint(x: origin.x, y: CGPoint(x: 0, y: $0).applying(transform).y))
             ctx.addLine(to: CGPoint(x: origin.x+6, y: CGPoint(x: 0, y: $0).applying(transform).y))
+            ctx.strokePath()
         }
-        ctx.strokePath()
         
     }
     
