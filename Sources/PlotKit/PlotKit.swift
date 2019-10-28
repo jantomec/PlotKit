@@ -87,6 +87,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             )
             ctx.setFont(CGFont(NSString(string: "Courier"))!)
             ctx.setFontSize(40)
+            ctx.setTextDrawingMode(.stroke)
             CTLineDraw(textLine, ctx)
             
         }
