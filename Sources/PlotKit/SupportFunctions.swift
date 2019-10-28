@@ -15,14 +15,14 @@ func fitTransform(dataX x: [CGFloat], y: [CGFloat], size: CGSize, padding: CGVec
     let ty: CGFloat
     if let xmin = x.min(), let xmax = x.max() {
         sx = (0.9*size.width - padding.dx)/(xmax - xmin)
-        tx = (0.05*size.width - padding.dx) + padding.dx
+        tx = 0.05*size.width + padding.dx
     } else {
         sx = 0.9
         tx = 0.05 + padding.dx
     }
     if let ymin = y.min(), let ymax = y.max() {
         sy = (0.9*size.height - padding.dy)/(ymax - ymin)
-        ty = (0.05*size.height - padding.dy) + padding.dy
+        ty = 0.05*size.height + padding.dy
     } else {
         sy = 0.9
         ty = 0.05 + padding.dy
