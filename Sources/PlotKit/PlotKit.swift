@@ -22,28 +22,33 @@ public func plot(x: [CGFloat], y: [CGFloat]) {
     let tx: CGFloat
     let ty: CGFloat
     if let xmin = x.min(), let xmax = x.max() {
-        sx = size.width/(xmax - xmin)
-        tx = 0
+        sx = 0.9*size.width/(xmax - xmin)
+        tx = 0.05*size.width/(xmax - xmin)
     } else {
-        sx = 1
-        tx = 0
+        sx = 0.9
+        tx = 0.05
     }
     if let ymin = y.min(), let ymax = y.max() {
-        sy = size.height/(ymax - ymin)
-        ty = 0
+        sy = 0.9*size.height/(ymax - ymin)
+        ty = 0.05*size.height/(ymax - ymin)
     } else {
-        sy = 1
-        ty = 0
+        sy = 0.9
+        ty = 0.05
     }
     
-    print(bitmapContext?.convertToDeviceSpace(points[0]))
-    print(bitmapContext?.ctm)
-    print(bitmapContext?.userSpaceToDeviceSpaceTransform)
     bitmapContext?.scaleBy(x: sx, y: sy)
     bitmapContext?.translateBy(x: tx, y: ty)
     
-    print(points[0])
-    print(bitmapContext?.convertToDeviceSpace(points[0]))
-    print(bitmapContext?.ctm)
-    print(bitmapContext?.userSpaceToDeviceSpaceTransform)
+    bitmapContext?.setFillColor(CGColor(red: 0.8, green: 0.4, blue: 0.2, alpha: 1))
+    bitmapContext?.setStrokeColor(CGColor(red: 0.8, green: 0.4, blue: 0.2, alpha: 1))
+    
+    if let ctx = bitmapContext {
+        points.forEach {
+            (p) in
+            ctx.beginPath()
+            ctx.addArc(center: ctx.convertToDeviceSpace(p), radius: 2, startAngle: 0, endAngle: 2*CGFloat.pi, clockwise: true)
+            ctx.closePath()
+            ctx.drawPath(using: .eoFillStroke)
+        }
+    }
 }
