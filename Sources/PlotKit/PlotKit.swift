@@ -15,28 +15,52 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
                                   space: colorSpace,
                                   bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
     
-    // TRANSFORMATION OF COORDINATES
-    
-    let transform = fitTransform(dataX: x, y: y, size: size)
-    
     // PREFERENCES - colors, fonts, ...
     
     let annotationColor = CGColor(colorSpace: colorSpace, components: [0, 0, 0, 1])!
     let plotColor = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
-    //let annotationFont = CGFont(CFString("Arial"))
+    let annotationFont = CGFont(NSString(string: "Arial"))!
+    let fontSize: CGFloat = 12
+    
+    // ANNOTATIONS - labels, legends, ticks...
+    let (xticks, yticks) = ticks(dataX: x, y: y)
+    
+    let tallestXtickLabel: CGFloat
+    let widestYtickLabel: CGFloat
+    if let ctx = bitmapContext {
+        tallestXtickLabel = xticks.map({
+            let attrString = NSAttributedString(string: $0.description)
+            let textLine = CTLineCreateWithAttributedString(attrString)
+            return CTLineGetImageBounds(textLine, ctx).height
+        }).max() ?? 0
+        widestYtickLabel = yticks.map({
+            let attrString = NSAttributedString(string: $0.description)
+            let textLine = CTLineCreateWithAttributedString(attrString)
+            return CTLineGetImageBounds(textLine, ctx).width
+        }).max() ?? 0
+    } else {
+        tallestXtickLabel = 0
+        widestYtickLabel = 0
+    }
+    
+    // TRANSFORMATION OF COORDINATES
+    
+    let transform = fitTransform(dataX: x, y: y, size: size, padding: CGVector(dx: widestYtickLabel,
+                                                                               dy: tallestXtickLabel))
+    
+    
     
     // AXES
     
     bitmapContext?.setFillColor(annotationColor)
     bitmapContext?.setStrokeColor(annotationColor)
-    //bitmapContext?.setFont(annotationFont)
-    
+    bitmapContext?.setFont(annotationFont)
+    bitmapContext?.setFontSize(fontSize)
+    // bitmapContext?.setLineWidth(1)  // default is 1
     
     if let ctx = bitmapContext {
         
         ctx.beginPath()
-        
-        //bitmapContext?.setLineWidth(1)  // default is 1
         
         let origin = CGPoint.zero.applying(transform)
         
@@ -46,11 +70,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
         ctx.addLine(to: CGPoint(x: origin.x, y: size.height))  // y axis
         ctx.strokePath()
         
-        //bitmapContext?.setLineWidth(1)
-        
-        let (xticks, yticks) = ticks(dataX: x, y: y)
-        
-        xticks.forEach {
+        xticks.dropFirst().forEach {
             // tick
             ctx.move(to: CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y))
             ctx.addLine(to: CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y+6))
@@ -58,11 +78,15 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             // tick label
             let attrString = NSAttributedString(string: $0.description)
             let textLine = CTLineCreateWithAttributedString(attrString)
-            ctx.textPosition = CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y)
+            let size = CTLineGetImageBounds(textLine, ctx)
+            ctx.textPosition = CGPoint(
+                x: CGPoint(x: $0, y: 0).applying(transform).x - size.width/2,
+                y: origin.y - size.height
+            )
             CTLineDraw(textLine, ctx)
             
         }
-        yticks.forEach {
+        yticks.dropFirst().forEach {
             // tick
             ctx.move(to: CGPoint(x: origin.x, y: CGPoint(x: 0, y: $0).applying(transform).y))
             ctx.addLine(to: CGPoint(x: origin.x+6, y: CGPoint(x: 0, y: $0).applying(transform).y))
@@ -70,7 +94,10 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             // tick label
             let attrString = NSAttributedString(string: $0.description)
             let textLine = CTLineCreateWithAttributedString(attrString)
-            ctx.textPosition = CGPoint(x: origin.x, y: CGPoint(x: 0, y: $0).applying(transform).y)
+            ctx.textPosition = CGPoint(
+                x: origin.x - size.width-2,
+                y: CGPoint(x: 0, y: $0).applying(transform).y - size.height/2
+            )
             CTLineDraw(textLine, ctx)
         }
         
