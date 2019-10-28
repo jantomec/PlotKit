@@ -38,8 +38,6 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
         CGAffineTransform(translationX: tx, y: ty)
     )
     
-    print(transform)
-    
     let color = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
     
     bitmapContext?.setFillColor(color)
