@@ -81,7 +81,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             let labelSize = CTLineGetImageBounds(textLine, ctx)
             ctx.textPosition = CGPoint(
                 x: CGPoint(x: $0, y: 0).applying(transform).x - labelSize.width/2,
-                y: origin.y - size.height-4
+                y: origin.y - labelSize.height-4
             )
             CTLineDraw(textLine, ctx)
             
@@ -96,7 +96,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             let textLine = CTLineCreateWithAttributedString(attrString)
             let labelSize = CTLineGetImageBounds(textLine, ctx)
             ctx.textPosition = CGPoint(
-                x: origin.x,//size.width-4,
+                x: origin.x - labelSize.width-4,
                 y: CGPoint(x: 0, y: $0).applying(transform).y - labelSize.height/2
             )
             CTLineDraw(textLine, ctx)
