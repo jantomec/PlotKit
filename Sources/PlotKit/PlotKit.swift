@@ -22,18 +22,18 @@ public func plot(x: [CGFloat], y: [CGFloat]) {
     let tx: CGFloat
     let ty: CGFloat
     if let xmin = x.min(), let xmax = x.max() {
-        sx = 0.9*size.width*(xmax - xmin)
-        tx = 0.05*size.width*(xmax - xmin)
+        sx = (xmax - xmin)*size.width
+        tx = 0
     } else {
-        sx = 0.9
-        tx = 0.05
+        sx = 1
+        tx = 0
     }
     if let ymin = y.min(), let ymax = y.max() {
-        sy = 0.9*size.height*(ymax - ymin)
-        ty = 0.05*size.height*(ymax - ymin)
+        sy =(ymax - ymin)/size.height
+        ty = 0
     } else {
-        sy = 0.9
-        ty = 0.05
+        sy = 1
+        ty = 0
     }
     
     bitmapContext?.scaleBy(x: sx, y: sy)
