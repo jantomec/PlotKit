@@ -45,6 +45,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     if let ctx = bitmapContext {
         points.forEach {
             (p) in
+            print(ctx.convertToDeviceSpace(p))
             ctx.beginPath()
             ctx.addArc(center: ctx.convertToDeviceSpace(p), radius: 2, startAngle: 0, endAngle: 2*CGFloat.pi, clockwise: true)
             ctx.closePath()
