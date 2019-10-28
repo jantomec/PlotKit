@@ -99,6 +99,10 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
                                            CFRangeMake(0, $0.description.count),
                                            kCTFontAttributeName,
                                            annotationFont)
+            CFAttributedStringSetAttribute(attrString,
+                                           CFRangeMake(0, $0.description.count),
+                                           kCTFontSizeAttribute,
+                                           NSNumber(value: Double(fontSize)))
             if let str = attrString {
                 let textLine = CTLineCreateWithAttributedString(str)
                 let labelSize = CTLineGetImageBounds(textLine, ctx)
