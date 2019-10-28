@@ -2,7 +2,7 @@ import CoreGraphics
 
 public func plot(x: [Double], y: [Double]) {
     
-    let size = CGSize(width: 100, height: 100)
+    let size = CGSize(width: 75, height: 75)
     let bitsPerComponent = 8
     let bytesPerRow = 0 // 0 means automatic calculation if data == nil
     let colorSpace = CGColorSpaceCreateDeviceRGB()
@@ -18,5 +18,6 @@ public func plot(x: [Double], y: [Double]) {
     print(points)
     
     print(bitmapContext?.convertToUserSpace(points[0]))
+    print(bitmapContext?.ctm)
     
 }
