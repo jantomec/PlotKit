@@ -46,12 +46,12 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
         let (xticks, yticks) = ticks(dataX: x, y: y)
         
         xticks.forEach {
-            ctx.move(to: CGPoint(x: $0, y: origin.y))
-            ctx.addLine(to: CGPoint(x: $0, y: origin.y+6))
+            ctx.move(to: CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y))
+            ctx.addLine(to: CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y+6))
         }
         yticks.forEach {
-            ctx.move(to: CGPoint(x: origin.x, y: $0))
-            ctx.addLine(to: CGPoint(x: origin.x+6, y: $0))
+            ctx.move(to: CGPoint(x: origin.x, y: CGPoint(x: 0, y: $0).applying(transform).y))
+            ctx.addLine(to: CGPoint(x: origin.x+6, y: CGPoint(x: 0, y: $0).applying(transform).y))
         }
         ctx.strokePath()
         
