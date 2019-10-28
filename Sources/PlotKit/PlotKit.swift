@@ -21,21 +21,21 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     let ty: CGFloat
     if let xmin = x.min(), let xmax = x.max() {
         sx = 0.9*size.width/(xmax - xmin)
-        tx = 0.05*size.width/(xmax - xmin)
+        tx = 0.05*size.width
     } else {
         sx = 0.9
         tx = 0.05
     }
     if let ymin = y.min(), let ymax = y.max() {
         sy = 0.9*size.height/(ymax - ymin)
-        ty = 0.05*size.height/(ymax - ymin)
+        ty = 0.05*size.height
     } else {
         sy = 0.9
         ty = 0.05
     }
     
     let transform = CGAffineTransform(scaleX: sx, y: sy).concatenating(
-        CGAffineTransform(translationX: -tx, y: -ty)
+        CGAffineTransform(translationX: tx, y: ty)
     )
     
     print(transform)
