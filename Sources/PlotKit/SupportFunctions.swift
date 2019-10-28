@@ -7,7 +7,7 @@
 
 import CoreGraphics
 
-func fitTransform(dataX x: [CGFloat], y: [CGFloat]) -> CGAffineTransform {
+func fitTransform(dataX x: [CGFloat], y: [CGFloat], size: CGSize) -> CGAffineTransform {
     let sx: CGFloat
     let sy: CGFloat
     let tx: CGFloat

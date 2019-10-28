@@ -15,7 +15,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     
     // TRANSFORMATION OF COORDINATES
     
-    let transform = fitTransform(dataX: x, y: y)
+    let transform = fitTransform(dataX: x, y: y, size: size)
     
     // COLORS
     
