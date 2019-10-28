@@ -1,6 +1,6 @@
 import CoreGraphics
 
-public func plot(x: [CGFloat], y: [CGFloat]) {
+public func plot(x: [CGFloat], y: [CGFloat]) -> CGImage? {
     
     let size = CGSize(width: 75, height: 75)
     let bitsPerComponent = 8
@@ -53,4 +53,6 @@ public func plot(x: [CGFloat], y: [CGFloat]) {
             ctx.drawPath(using: .eoFillStroke)
         }
     }
+    
+    return bitmapContext?.makeImage()
 }
