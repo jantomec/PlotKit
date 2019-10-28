@@ -1,6 +1,7 @@
 import CoreText
 import Foundation
 import CoreGraphics
+import CoreFoundation
 
 public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     
@@ -21,10 +22,15 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     let plotColor = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
 //    let annotationFont = CGFont(NSString(string: "Arial"))!
 //    let fontSize: CGFloat = 18
-    let tickLabelTextAttrs: [NSString : AnyObject] = [
+//    var tickLabelTextKeys = [kCTFontSizeAttribute]
+//    var tickLabelTextValues = [NSNumber(value: 18.0)]
+    let tickLabelTextAttrs = [
+        kCTFontSizeAttribute as String : 18 as NSNumber
+    ] as CFDictionary
+        //: [NSString : AnyObject] = [
 //        kCTFontAttributeName:  maxSize,
-        kCTFontSizeAttribute: NSNumber(value: 18.0)
-    ]
+        //kCTFontSizeAttribute: NSNumber(value: 18.0)
+    //]
     
     // ANNOTATIONS - labels, legends, ticks...
     let (xticks, yticks) = ticks(dataX: x, y: y)
@@ -102,7 +108,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
 //            let attrString = NSAttributedString(string: $0.description)
             let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
                                      NSString(string: $0.description),
-                                     tickLabelTextAttrs as CFDictionary)
+                                     tickLabelTextAttrs)
             let textLine = CTLineCreateWithAttributedString(attrString!)
             let labelSize = CTLineGetImageBounds(textLine, ctx)
             ctx.textPosition = CGPoint(
@@ -111,26 +117,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             )
             
             CTLineDraw(textLine, ctx)
-//            let attrString = CFAttributedStringCreateMutableCopy(kCFAllocatorDefault,
-//                                                                 0,
-//                                                                 NSAttributedString(string: $0.description))
-//            CFAttributedStringSetAttribute(attrString,
-//                                           CFRangeMake(0, $0.description.count),
-//                                           kCTFontAttributeName,
-//                                           annotationFont)
-//            CFAttributedStringSetAttribute(attrString,
-//                                           CFRangeMake(0, $0.description.count),
-//                                           kCTFontSizeAttribute,
-//                                           NSNumber(value: Double(fontSize)))
-//            if let str = attrString {
-//                let textLine = CTLineCreateWithAttributedString(str)
-//                let labelSize = CTLineGetImageBounds(textLine, ctx)
-//                ctx.textPosition = CGPoint(
-//                    x: origin.x - labelSize.width-4,
-//                    y: CGPoint(x: 0, y: $0).applying(transform).y - labelSize.height/2
-//                )
-//                CTLineDraw(textLine, ctx)
-//            }
+            
         }
     }
     
