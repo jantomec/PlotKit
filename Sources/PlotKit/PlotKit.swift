@@ -36,6 +36,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     
     //bitmapContext?.scaleBy(x: sx, y: sy)
     //bitmapContext?.translateBy(x: tx, y: ty)
+    let transform = CGAffineTransform.identity
     
     let color = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
     
@@ -45,9 +46,8 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     if let ctx = bitmapContext {
         points.forEach {
             (p) in
-            print(ctx.convertToUserSpace(p))
             ctx.beginPath()
-            ctx.addArc(center: ctx.convertToUserSpace(p), radius: 2, startAngle: 0, endAngle: 2*CGFloat.pi, clockwise: true)
+            ctx.addArc(center: p.applying(transform), radius: 2, startAngle: 0, endAngle: 2*CGFloat.pi, clockwise: true)
             ctx.closePath()
             ctx.drawPath(using: .eoFillStroke)
         }
