@@ -36,6 +36,7 @@ public func plot(x: [CGFloat], y: [CGFloat]) {
         ty = 0
     }
     
+    print(bitmapContext?.convertToDeviceSpace(points[0]))
     print(bitmapContext?.ctm)
     bitmapContext?.scaleBy(x: sx, y: sy)
     bitmapContext?.translateBy(x: tx, y: ty)
