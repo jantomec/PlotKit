@@ -96,7 +96,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             let textLine = CTLineCreateWithAttributedString(attrString)
             ctx.textPosition = CGPoint(
                 x: origin.x,//size.width-4,
-                y: CGPoint(x: 0, y: $0).applying(transform).y - size.height/2
+                y: CGPoint(x: 0, y: $0).applying(transform).y// - size.height/2
             )
             CTLineDraw(textLine, ctx)
         }
