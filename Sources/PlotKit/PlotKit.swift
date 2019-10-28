@@ -29,7 +29,7 @@ public func plot(x: [CGFloat], y: [CGFloat]) {
         tx = 0
     }
     if let ymin = y.min(), let ymax = y.max() {
-        sy =(ymax - ymin)/size.height
+        sy = (ymax - ymin)/size.height
         ty = 0
     } else {
         sy = 1
