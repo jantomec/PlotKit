@@ -85,6 +85,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
                 x: CGPoint(x: $0, y: 0).applying(transform).x - labelSize.width/2,
                 y: origin.y - labelSize.height-4
             )
+            ctx.setFont(CGFont(NSString(string: "Helveticfdsa")))
             ctx.setFontSize(40)
             CTLineDraw(textLine, ctx)
             
