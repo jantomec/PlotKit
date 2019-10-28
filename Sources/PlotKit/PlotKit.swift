@@ -34,8 +34,8 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
         ty = 0.05
     }
     
-    bitmapContext?.scaleBy(x: sx, y: sy)
-    bitmapContext?.translateBy(x: tx, y: ty)
+    //bitmapContext?.scaleBy(x: sx, y: sy)
+    //bitmapContext?.translateBy(x: tx, y: ty)
     
     let color = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
     
