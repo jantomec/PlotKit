@@ -38,11 +38,12 @@ public func plot(x: [CGFloat], y: [CGFloat]) {
     
     print(bitmapContext?.convertToDeviceSpace(points[0]))
     print(bitmapContext?.ctm)
+    print(bitmapContext?.userSpaceToDeviceSpaceTransform)
     bitmapContext?.scaleBy(x: sx, y: sy)
     bitmapContext?.translateBy(x: tx, y: ty)
     
     print(points[0])
     print(bitmapContext?.convertToDeviceSpace(points[0]))
     print(bitmapContext?.ctm)
-    
+    print(bitmapContext?.userSpaceToDeviceSpaceTransform)
 }
