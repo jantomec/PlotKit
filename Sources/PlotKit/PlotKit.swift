@@ -25,6 +25,9 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     // ANNOTATIONS - labels, legends, ticks...
     let (xticks, yticks) = ticks(dataX: x, y: y)
     
+    bitmapContext?.setFont(annotationFont)
+    bitmapContext?.setFontSize(fontSize)
+    
     let tallestXtickLabel: CGFloat
     let widestYtickLabel: CGFloat
     if let ctx = bitmapContext {
