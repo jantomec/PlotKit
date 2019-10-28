@@ -48,7 +48,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     let transform = fitTransform(dataX: x, y: y, size: size, padding: CGVector(dx: widestYtickLabel,
                                                                                dy: tallestXtickLabel))
     
-    
+    print(widestYtickLabel)
     
     // AXES
     
@@ -63,6 +63,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
         ctx.beginPath()
         
         let origin = CGPoint.zero.applying(transform)
+        print(origin)
         
         ctx.move(to: CGPoint(x: 0, y: origin.y))  // x axis
         ctx.addLine(to: CGPoint(x: size.width, y: origin.y))
