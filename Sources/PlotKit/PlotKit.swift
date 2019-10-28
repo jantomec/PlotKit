@@ -26,6 +26,8 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     // ANNOTATIONS - labels, legends, ticks...
     let (xticks, yticks) = ticks(dataX: x, y: y)
     
+    bitmapContext?.setFontSize(40)
+    
     let tallestXtickLabel: CGFloat
     let widestYtickLabel: CGFloat
     if let ctx = bitmapContext {
@@ -92,26 +94,34 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             ctx.addLine(to: CGPoint(x: origin.x+6, y: CGPoint(x: 0, y: $0).applying(transform).y))
             ctx.strokePath()
             // tick label
-            let attrString = CFAttributedStringCreateMutableCopy(kCFAllocatorDefault,
-                                                                 0,
-                                                                 NSAttributedString(string: $0.description))
-            CFAttributedStringSetAttribute(attrString,
-                                           CFRangeMake(0, $0.description.count),
-                                           kCTFontAttributeName,
-                                           annotationFont)
-            CFAttributedStringSetAttribute(attrString,
-                                           CFRangeMake(0, $0.description.count),
-                                           kCTFontSizeAttribute,
-                                           NSNumber(value: Double(fontSize)))
-            if let str = attrString {
-                let textLine = CTLineCreateWithAttributedString(str)
-                let labelSize = CTLineGetImageBounds(textLine, ctx)
-                ctx.textPosition = CGPoint(
-                    x: origin.x - labelSize.width-4,
-                    y: CGPoint(x: 0, y: $0).applying(transform).y - labelSize.height/2
-                )
-                CTLineDraw(textLine, ctx)
-            }
+            let attrString = NSAttributedString(string: $0.description)
+            let textLine = CTLineCreateWithAttributedString(attrString)
+            let labelSize = CTLineGetImageBounds(textLine, ctx)
+            ctx.textPosition = CGPoint(
+                x: origin.x - labelSize.width-4,
+                y: CGPoint(x: 0, y: $0).applying(transform).y - labelSize.height/2
+            )
+            CTLineDraw(textLine, ctx)
+//            let attrString = CFAttributedStringCreateMutableCopy(kCFAllocatorDefault,
+//                                                                 0,
+//                                                                 NSAttributedString(string: $0.description))
+//            CFAttributedStringSetAttribute(attrString,
+//                                           CFRangeMake(0, $0.description.count),
+//                                           kCTFontAttributeName,
+//                                           annotationFont)
+//            CFAttributedStringSetAttribute(attrString,
+//                                           CFRangeMake(0, $0.description.count),
+//                                           kCTFontSizeAttribute,
+//                                           NSNumber(value: Double(fontSize)))
+//            if let str = attrString {
+//                let textLine = CTLineCreateWithAttributedString(str)
+//                let labelSize = CTLineGetImageBounds(textLine, ctx)
+//                ctx.textPosition = CGPoint(
+//                    x: origin.x - labelSize.width-4,
+//                    y: CGPoint(x: 0, y: $0).applying(transform).y - labelSize.height/2
+//                )
+//                CTLineDraw(textLine, ctx)
+//            }
         }
     }
     
