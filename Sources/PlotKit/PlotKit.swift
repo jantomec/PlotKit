@@ -13,35 +13,36 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
                                   space: colorSpace,
                                   bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
     
+    // TRANSFORMATION OF COORDINATES
+    
+    let transform = fitTransform(dataX: x, y: y)
+    
+    // COLORS
+    
+    let annotationColor = CGColor(colorSpace: colorSpace, components: [0, 0, 0, 1])!
+    let plotColor = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
+    
+    // AXES
+    
+    bitmapContext?.setFillColor(annotationColor)
+    bitmapContext?.setStrokeColor(annotationColor)
+    
+    if let ctx = bitmapContext {
+        ctx.beginPath()
+        let origin = CGPoint.zero.applying(transform)
+        ctx.move(to: CGPoint(x: 0, y: origin.y))
+        ctx.addLine(to: CGPoint(x: size.width, y: origin.y))
+        ctx.move(to: CGPoint(x: origin.x, y: 0))
+        ctx.addLine(to: CGPoint(x: origin.x, y: size.height))
+        ctx.strokePath()
+    }
+    
+    // DRAW POINTS
+    
     let points = x.indices.map { CGPoint(x: x[$0], y: y[$0]) }
     
-    let sx: CGFloat
-    let sy: CGFloat
-    let tx: CGFloat
-    let ty: CGFloat
-    if let xmin = x.min(), let xmax = x.max() {
-        sx = 0.9*size.width/(xmax - xmin)
-        tx = 0.05*size.width
-    } else {
-        sx = 0.9
-        tx = 0.05
-    }
-    if let ymin = y.min(), let ymax = y.max() {
-        sy = 0.9*size.height/(ymax - ymin)
-        ty = 0.05*size.height
-    } else {
-        sy = 0.9
-        ty = 0.05
-    }
-    
-    let transform = CGAffineTransform(scaleX: sx, y: sy).concatenating(
-        CGAffineTransform(translationX: tx, y: ty)
-    )
-    
-    let color = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
-    
-    bitmapContext?.setFillColor(color)
-    bitmapContext?.setStrokeColor(color)
+    bitmapContext?.setFillColor(plotColor)
+    bitmapContext?.setStrokeColor(plotColor)
     
     if let ctx = bitmapContext {
         points.forEach {
