@@ -20,7 +20,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     let annotationColor = CGColor(colorSpace: colorSpace, components: [0, 0, 0, 1])!
     let plotColor = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
     let annotationFont = CGFont(NSString(string: "Arial"))!
-    let fontSize: CGFloat = 12
+    let fontSize: CGFloat = 18
     
     // ANNOTATIONS - labels, legends, ticks...
     let (xticks, yticks) = ticks(dataX: x, y: y)
@@ -81,7 +81,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             let size = CTLineGetImageBounds(textLine, ctx)
             ctx.textPosition = CGPoint(
                 x: CGPoint(x: $0, y: 0).applying(transform).x - size.width/2,
-                y: origin.y - size.height
+                y: origin.y - size.height-4
             )
             CTLineDraw(textLine, ctx)
             
@@ -95,7 +95,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             let attrString = NSAttributedString(string: $0.description)
             let textLine = CTLineCreateWithAttributedString(attrString)
             ctx.textPosition = CGPoint(
-                x: origin.x - size.width-2,
+                x: origin.x - size.width-4,
                 y: CGPoint(x: 0, y: $0).applying(transform).y - size.height/2
             )
             CTLineDraw(textLine, ctx)
