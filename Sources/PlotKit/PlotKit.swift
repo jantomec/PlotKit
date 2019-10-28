@@ -39,8 +39,10 @@ public func plot(x: [CGFloat], y: [CGFloat]) {
     bitmapContext?.scaleBy(x: sx, y: sy)
     bitmapContext?.translateBy(x: tx, y: ty)
     
-    bitmapContext?.setFillColor(CGColor(red: 0.8, green: 0.4, blue: 0.2, alpha: 1))
-    bitmapContext?.setStrokeColor(CGColor(red: 0.8, green: 0.4, blue: 0.2, alpha: 1))
+    let color = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
+    
+    bitmapContext?.setFillColor(color)
+    bitmapContext?.setStrokeColor(color)
     
     if let ctx = bitmapContext {
         points.forEach {
