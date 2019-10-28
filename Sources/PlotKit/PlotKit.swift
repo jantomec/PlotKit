@@ -28,13 +28,33 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     bitmapContext?.setStrokeColor(annotationColor)
     
     if let ctx = bitmapContext {
+        
         ctx.beginPath()
+        
+        //bitmapContext?.setLineWidth(1)  // default is 1
+        
         let origin = CGPoint.zero.applying(transform)
-        ctx.move(to: CGPoint(x: 0, y: origin.y))
+        
+        ctx.move(to: CGPoint(x: 0, y: origin.y))  // x axis
         ctx.addLine(to: CGPoint(x: size.width, y: origin.y))
         ctx.move(to: CGPoint(x: origin.x, y: 0))
-        ctx.addLine(to: CGPoint(x: origin.x, y: size.height))
+        ctx.addLine(to: CGPoint(x: origin.x, y: size.height))  // y axis
         ctx.strokePath()
+        
+        //bitmapContext?.setLineWidth(1)
+        
+        let (xticks, yticks) = ticks(dataX: x, y: y)
+        
+        xticks.forEach {
+            ctx.move(to: CGPoint(x: $0, y: origin.y))
+            ctx.addLine(to: CGPoint(x: $0, y: origin.y+6))
+        }
+        yticks.forEach {
+            ctx.move(to: CGPoint(x: origin.x, y: $0))
+            ctx.addLine(to: CGPoint(x: origin.x+6, y: $0))
+        }
+        ctx.strokePath()
+        
     }
     
     // DRAW POINTS
