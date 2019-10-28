@@ -4,7 +4,7 @@ public func plot<T: Numeric>(x: [T], y: [T]) {
     
     let size = CGSize(width: 100, height: 100)
     let bitsPerComponent = 8
-    let bytesPerRow = 0
+    let bytesPerRow = 0 // 0 means automatic calculation if data == nil
     let colorSpace = CGColorSpaceCreateDeviceRGB()
     let bitmapContext = CGContext(data: nil,
                                   width: Int(size.width),
@@ -13,5 +13,10 @@ public func plot<T: Numeric>(x: [T], y: [T]) {
                                   bytesPerRow: Int(bytesPerRow),
                                   space: colorSpace,
                                   bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+    
+    let points = x.indices.map { CGPoint(x: x[$0], y: y[$0]) }
+    print(points)
+    
+    
     
 }
