@@ -103,7 +103,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
                                      NSString(string: $0.description),
                                      tickLabelTextAttrs as CFDictionary)
-            let textLine = CTLineCreateWithAttributedString(attrString)
+            let textLine = CTLineCreateWithAttributedString(attrString!)
             let labelSize = CTLineGetImageBounds(textLine, ctx)
             ctx.textPosition = CGPoint(
                 x: origin.x - labelSize.width-4,
