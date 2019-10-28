@@ -37,7 +37,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     //bitmapContext?.scaleBy(x: sx, y: sy)
     //bitmapContext?.translateBy(x: tx, y: ty)
     let transform = CGAffineTransform(scaleX: sx, y: sy).concatenating(
-        CGAffineTransform(translationX: tx, y: ty)
+        CGAffineTransform(translationX: -tx, y: -ty)
     )
     
     let color = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
