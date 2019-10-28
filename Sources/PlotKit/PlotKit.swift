@@ -17,7 +17,7 @@ public func plot(x: [Double], y: [Double]) {
     let points = x.indices.map { CGPoint(x: x[$0], y: y[$0]) }
     print(points)
     
-    print(bitmapContext?.convertToUserSpace(points[0]))
+    print(bitmapContext?.convertToDeviceSpace(points[0]))
     print(bitmapContext?.ctm)
     
 }
