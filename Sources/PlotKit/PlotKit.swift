@@ -2,6 +2,11 @@ import CoreText
 import Foundation
 import CoreGraphics
 import CoreFoundation
+#if os(iOS)
+import UIKit
+#else
+import AppKit
+#endif
 
 public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     
@@ -25,6 +30,10 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
         kCTFontSizeAttribute : 46 as NSNumber,
         kCTStrokeColorAttributeName : "red"
     ] as CFDictionary
+    
+    let tickLabelTextAttrs2: [NSAttributedString.Key : Any] = [
+        NSAttributedString.Key.font : CTFontCreateWithName("Arial" as NSString, 20, &(bitmapContext!.textMatrix))
+    ]
     
     // ANNOTATIONS - labels, legends, ticks...
     let (xticks, yticks) = ticks(dataX: x, y: y)
@@ -99,6 +108,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             // tick label
             
             let attrString = NSMutableAttributedString(string: $0.description)
+            attrString.addAttributes(tickLabelTextAttrs2, range: NSRange($0.description)!)
             ctx.setFontSize(25)
             let textLine = CTLineCreateWithAttributedString(attrString)
             let labelSize = CTLineGetImageBounds(textLine, ctx)
