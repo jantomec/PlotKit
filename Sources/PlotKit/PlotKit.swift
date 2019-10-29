@@ -20,22 +20,12 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     
     let annotationColor = CGColor(colorSpace: colorSpace, components: [0, 0, 0, 1])!
     let plotColor = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
-//    let annotationFont = CGFont(NSString(string: "Arial"))!
-//    let fontSize: CGFloat = 18
-//    var tickLabelTextKeys = [kCTFontSizeAttribute]
-//    var tickLabelTextValues = [NSNumber(value: 18.0)]
     let tickLabelTextAttrs = [
         kCTFontSizeAttribute as String : 18 as NSNumber
     ] as CFDictionary
-        //: [NSString : AnyObject] = [
-//        kCTFontAttributeName:  maxSize,
-        //kCTFontSizeAttribute: NSNumber(value: 18.0)
-    //]
     
     // ANNOTATIONS - labels, legends, ticks...
     let (xticks, yticks) = ticks(dataX: x, y: y)
-    
-    bitmapContext?.setFontSize(40)
     
     let tallestXtickLabel: CGFloat
     let widestYtickLabel: CGFloat
@@ -59,8 +49,6 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     
     let transform = fitTransform(dataX: x, y: y, size: size, padding: CGVector(dx: widestYtickLabel,
                                                                                dy: tallestXtickLabel))
-    
-    print(widestYtickLabel)
     
     // AXES
     
@@ -87,15 +75,17 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             ctx.addLine(to: CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y+6))
             ctx.strokePath()
             // tick label
-            let attrString = NSAttributedString(string: $0.description)
-            let textLine = CTLineCreateWithAttributedString(attrString)
+            let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
+                                                      NSString(string: $0.description),
+                                                      tickLabelTextAttrs)
+            let textLine = CTLineCreateWithAttributedString(attrString!)
             let labelSize = CTLineGetImageBounds(textLine, ctx)
             ctx.textPosition = CGPoint(
                 x: CGPoint(x: $0, y: 0).applying(transform).x - labelSize.width/2,
                 y: origin.y - labelSize.height-4
             )
-            ctx.setFont(CGFont(NSString(string: "Courier"))!)
-            ctx.setFontSize(40)
+//            ctx.setFont(CGFont(NSString(string: "Courier"))!)
+//            ctx.setFontSize(40)
             CTLineDraw(textLine, ctx)
             
         }
@@ -105,7 +95,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             ctx.addLine(to: CGPoint(x: origin.x+6, y: CGPoint(x: 0, y: $0).applying(transform).y))
             ctx.strokePath()
             // tick label
-//            let attrString = NSAttributedString(string: $0.description)
+            
             let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
                                      NSString(string: $0.description),
                                      tickLabelTextAttrs)
