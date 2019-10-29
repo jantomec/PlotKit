@@ -8,6 +8,7 @@ import UIKit
 import AppKit
 #endif
 
+@available(OSX 10.11, *)
 public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     
     let bitsPerComponent = 8
@@ -25,14 +26,15 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     
     let annotationColor = CGColor(colorSpace: colorSpace, components: [0, 0, 0, 1])!
     let plotColor = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
-    let tickLabelTextAttrs = [
-        kCTFontNameAttribute : "Arial",
-        kCTFontSizeAttribute : 46 as NSNumber,
-        kCTStrokeColorAttributeName : "red"
-    ] as CFDictionary
     
-    let tickLabelTextAttrs2: [NSAttributedString.Key : Any] = [
-        NSAttributedString.Key.font : CTFontCreateWithName("Arial" as NSString, 20, &(bitmapContext!.textMatrix))
+    #if os(iOS)
+    let tickLabelFont = UIFont(name: "Arial", size: 25)!
+    #else
+    let tickLabelFont = NSFont(name: "Arial", size: 25)!
+    #endif
+    
+    let tickLabelTextAttrs: [NSAttributedString.Key : Any] = [
+        NSAttributedString.Key.font : tickLabelFont
     ]
     
     // ANNOTATIONS - labels, legends, ticks...
@@ -42,14 +44,14 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     let widestYtickLabel: CGFloat
     if let ctx = bitmapContext {
         tallestXtickLabel = xticks.map({
-            let attrString = NSAttributedString(string: $0.description)
-            let textLine = CTLineCreateWithAttributedString(attrString)
-            return CTLineGetImageBounds(textLine, ctx).height
+            let attrString = NSAttributedString(string: $0.description, attributes: tickLabelTextAttrs)
+            return attrString.boundingRect(with: CGSize(width: 100, height: 100),
+                                           options: [], context: nil).height
         }).max() ?? 0
         widestYtickLabel = yticks.map({
-            let attrString = NSAttributedString(string: $0.description)
-            let textLine = CTLineCreateWithAttributedString(attrString)
-            return CTLineGetImageBounds(textLine, ctx).width
+            let attrString = NSAttributedString(string: $0.description, attributes: tickLabelTextAttrs)
+            return attrString.boundingRect(with: CGSize(width: 100, height: 100),
+                                           options: [], context: nil).width
         }).max() ?? 0
     } else {
         tallestXtickLabel = 0
@@ -86,18 +88,14 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             ctx.addLine(to: CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y+6))
             ctx.strokePath()
             // tick label
-            let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
-                                                      NSString(string: $0.description),
-                                                      tickLabelTextAttrs)
-            let textLine = CTLineCreateWithAttributedString(attrString!)
-            let labelSize = CTLineGetImageBounds(textLine, ctx)
-            ctx.textPosition = CGPoint(
+            let attrString = NSAttributedString(string: $0.description, attributes: tickLabelTextAttrs)
+            let labelSize = attrString.boundingRect(with: CGSize(width: 100, height: 100),
+                                                    options: [], context: nil)
+            let textPosition = CGPoint(
                 x: CGPoint(x: $0, y: 0).applying(transform).x - labelSize.width/2,
                 y: origin.y - labelSize.height-4
             )
-//            ctx.setFont(CGFont(NSString(string: "Courier"))!)
-//            ctx.setFontSize(40)
-            CTLineDraw(textLine, ctx)
+            attrString.draw(at: textPosition)
             
         }
         yticks.dropFirst().forEach {
@@ -107,19 +105,15 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             ctx.strokePath()
             // tick label
             
-            let textString = NSString(string: $0.description)
-            let attrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0)
-            CFAttributedStringReplaceString(attrString, CFRangeMake(0, 0), textString)
-            CFAttributedStringSetAttribute(attrString, CFRangeMake(0, $0.description.count), kCTFontSizeAttribute, NSNumber(value: 22.0))
-            
-            let textLine = CTLineCreateWithAttributedString(attrString!)
-            let labelSize = CTLineGetImageBounds(textLine, ctx)
-            ctx.textPosition = CGPoint(
+            let attrString = NSAttributedString(string: $0.description, attributes: tickLabelTextAttrs)
+            let labelSize = attrString.boundingRect(with: CGSize(width: 100, height: 100),
+                                                    options: [], context: nil)
+            let textPosition = CGPoint(
                 x: origin.x - labelSize.width-4,
                 y: CGPoint(x: 0, y: $0).applying(transform).y - labelSize.height/2
             )
             
-            CTLineDraw(textLine, ctx)
+            attrString.draw(at: textPosition)
             
         }
     }
