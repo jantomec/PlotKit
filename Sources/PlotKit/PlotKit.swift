@@ -98,8 +98,9 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             ctx.strokePath()
             // tick label
             
+            let string = NSMutableString(string: $0.description)
             let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
-                                     NSMutableString(string: $0.description),
+                                     string,
                                      tickLabelTextAttrs)
             let textLine = CTLineCreateWithAttributedString(attrString!)
             let labelSize = CTLineGetImageBounds(textLine, ctx)
