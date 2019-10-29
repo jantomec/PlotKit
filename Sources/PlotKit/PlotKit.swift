@@ -21,9 +21,9 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     let annotationColor = CGColor(colorSpace: colorSpace, components: [0, 0, 0, 1])!
     let plotColor = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
     let fontAttributes = [
-        kCTFontFamilyNameAttribute : "Courier",
-        kCTFontStyleNameAttribute : "Bold",
-        kCTFontSizeAttribute : 26.0
+        kCTFontFamilyNameAttribute : "Arial",
+//        kCTFontStyleNameAttribute : "Bold",
+        kCTFontSizeAttribute : 18.0
     ] as NSDictionary
     
     let descriptor = CTFontDescriptorCreateWithAttributes(fontAttributes)
