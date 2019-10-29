@@ -130,8 +130,8 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize, connected: Bool = fal
             points.dropLast().indices.forEach {
                 (i) in
                 ctx.beginPath()
-                ctx.move(to: points[i])
-                ctx.addLine(to: points[i+1])
+                ctx.move(to: points[i].applying(transform))
+                ctx.addLine(to: points[i+1].applying(transform))
                 ctx.strokePath()
             }
         }
