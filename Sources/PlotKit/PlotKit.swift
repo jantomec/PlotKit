@@ -3,7 +3,7 @@ import Foundation
 import CoreGraphics
 
 
-public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
+public func plot(x: [CGFloat], y: [CGFloat], size: CGSize, connected: Bool = false) -> CGImage? {
     
     let bitsPerComponent = 8
     let bytesPerRow = 0 // 0 means automatic calculation if data == nil
@@ -66,7 +66,6 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     
     bitmapContext?.setFillColor(annotationColor)
     bitmapContext?.setStrokeColor(annotationColor)
-    // bitmapContext?.setLineWidth(1)  // default is 1
     
     if let ctx = bitmapContext {
         
@@ -124,12 +123,22 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     
     bitmapContext?.setFillColor(plotColor)
     bitmapContext?.setStrokeColor(plotColor)
+    bitmapContext?.setLineWidth(2) // default is 1
     
     if let ctx = bitmapContext {
+        if connected {
+            points.dropLast().indices.forEach {
+                (i) in
+                ctx.beginPath()
+                ctx.move(to: points[i])
+                ctx.addLine(to: points[i+1])
+                ctx.strokePath()
+            }
+        }
         points.forEach {
             (p) in
             ctx.beginPath()
-            ctx.addArc(center: p.applying(transform), radius: 2, startAngle: 0, endAngle: 2*CGFloat.pi, clockwise: true)
+            ctx.addArc(center: p.applying(transform), radius: 3, startAngle: 0, endAngle: 2*CGFloat.pi, clockwise: true)
             ctx.closePath()
             ctx.drawPath(using: .eoFillStroke)
         }
