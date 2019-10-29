@@ -112,7 +112,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
                 x: origin.x - labelSize.width-4,
                 y: CGPoint(x: 0, y: $0).applying(transform).y - labelSize.height/2
             )
-            
+            print(attrString)
             attrString.draw(at: textPosition)
             
         }
