@@ -23,7 +23,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     let tickLabelTextAttrs = [
         kCTFontNameAttribute : "Arial",
         kCTFontSizeAttribute : 46 as NSNumber,
-        "sfdsdfggdf" : "red"
+        kCTStrokeColorAttributeName : "red"
     ] as CFDictionary
     
     // ANNOTATIONS - labels, legends, ticks...
@@ -99,7 +99,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
             // tick label
             
             let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
-                                     NSString(string: $0.description),
+                                     NSMutableString(string: $0.description),
                                      tickLabelTextAttrs)
             let textLine = CTLineCreateWithAttributedString(attrString!)
             let labelSize = CTLineGetImageBounds(textLine, ctx)
