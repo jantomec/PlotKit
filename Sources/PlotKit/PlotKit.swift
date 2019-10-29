@@ -37,7 +37,6 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     let widestYtickLabel: CGFloat
     if let ctx = bitmapContext {
         tallestXtickLabel = xticks.map({
-//            let attrString = NSAttributedString(string: $0.description)
             let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
                                                       $0.description as NSString,
                                                       attributes)
