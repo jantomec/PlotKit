@@ -21,6 +21,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize) -> CGImage? {
     let annotationColor = CGColor(colorSpace: colorSpace, components: [0, 0, 0, 1])!
     let plotColor = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
     let tickLabelTextAttrs = [
+        kCTFontNameAttribute as String : "Arial",
         kCTFontSizeAttribute as String : 46 as NSNumber
     ] as CFDictionary
     
