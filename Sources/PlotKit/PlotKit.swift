@@ -7,7 +7,7 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize,
     
     var bitmapContext = createCGContext(size: size)
     
-    pkplot(x: x, y: y, size: size, bitmapContext: &bitmapContext)
+    pkplot(x: x, y: y, size: size, options: options, bitmapContext: &bitmapContext)
     
     return bitmapContext.makeImage()
     
