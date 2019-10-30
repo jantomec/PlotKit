@@ -1,28 +1,24 @@
-import CoreText
 import Foundation
 import CoreGraphics
+import CoreText
 
 public func plot(x: [CGFloat], y: [CGFloat], size: CGSize,
-                 options: [PKPlotOption : Any] = [:], context: CGContext? = nil) -> CGImage? {
+                 options: [PKPlotOption : Any] = [:]) -> CGImage? {
     
-    let bitmapContext: CGContext?
-    let colorSpace = CGColorSpaceCreateDeviceRGB()
-    if context == nil {
-        let bitsPerComponent = 8
-        let bytesPerRow = 0 // 0 means automatic calculation if data == nil
-        bitmapContext = CGContext(data: nil,
-                                  width: Int(size.width),
-                                  height: Int(size.height),
-                                  bitsPerComponent: Int(bitsPerComponent),
-                                  bytesPerRow: Int(bytesPerRow),
-                                  space: colorSpace,
-                                  bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
-    } else {
-        bitmapContext = context
-    }
+    var bitmapContext = createCGContext(size: size)
+    
+    pkplot(x: x, y: y, size: size, bitmapContext: &bitmapContext)
+    
+    return bitmapContext.makeImage()
+    
+}
+
+func pkplot(x: [CGFloat], y: [CGFloat], size: CGSize,
+          options: [PKPlotOption : Any] = [:], bitmapContext: inout CGContext) {
     
     // PREFERENCES - colors, fonts, ...
     
+    let colorSpace = CGColorSpaceCreateDeviceRGB()
     let annotationColor = CGColor(colorSpace: colorSpace, components: [0, 0, 0, 1])!
     let plotColor = CGColor(colorSpace: colorSpace, components: [0.8, 0.4, 0.2, 1])!
     let fontAttributes = [
@@ -36,33 +32,29 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize,
     let attributes = [kCTFontAttributeName : font] as CFDictionary
     
     // ANNOTATIONS - labels, legends, ticks...
+    
     let (xticks, yticks) = ticks(dataX: x, y: y,
                                  xlimit: options[.xlimit] as? (CGFloat, CGFloat),
                                  ylimit: options[.ylimit] as? (CGFloat, CGFloat))
     
     let tallestXtickLabel: CGFloat
     let widestYtickLabel: CGFloat
-    if let ctx = bitmapContext {
-        tallestXtickLabel = xticks.map({
-            let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
-                                                      $0.description as NSString,
-                                                      attributes)
-            let textLine = CTLineCreateWithAttributedString(attrString!)
-            let labelSize = CTLineGetImageBounds(textLine, ctx)
-            return labelSize.height
-        }).max() ?? 0
-        widestYtickLabel = yticks.map({
-            let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
-                                                      $0.description as NSString,
-                                                      attributes)
-            let textLine = CTLineCreateWithAttributedString(attrString!)
-            let labelSize = CTLineGetImageBounds(textLine, ctx)
-            return labelSize.width
-        }).max() ?? 0
-    } else {
-        tallestXtickLabel = 0
-        widestYtickLabel = 0
-    }
+    tallestXtickLabel = xticks.map({
+        let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
+                                                  $0.description as NSString,
+                                                  attributes)
+        let textLine = CTLineCreateWithAttributedString(attrString!)
+        let labelSize = CTLineGetImageBounds(textLine, bitmapContext)
+        return labelSize.height
+    }).max() ?? 0
+    widestYtickLabel = yticks.map({
+        let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
+                                                  $0.description as NSString,
+                                                  attributes)
+        let textLine = CTLineCreateWithAttributedString(attrString!)
+        let labelSize = CTLineGetImageBounds(textLine, bitmapContext)
+        return labelSize.width
+    }).max() ?? 0
     
     // TRANSFORMATION OF COORDINATES
     
@@ -74,87 +66,81 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize,
     
     // AXES
     
-    bitmapContext?.setFillColor(annotationColor)
-    bitmapContext?.setStrokeColor(annotationColor)
+    bitmapContext.setFillColor(annotationColor)
+    bitmapContext.setStrokeColor(annotationColor)
     
-    if let ctx = bitmapContext {
+    bitmapContext.beginPath()
+    
+    let origin = CGPoint.zero.applying(transform)
+    
+    bitmapContext.move(to: CGPoint(x: 0, y: origin.y))  // x axis
+    bitmapContext.addLine(to: CGPoint(x: size.width, y: origin.y))
+    bitmapContext.move(to: CGPoint(x: origin.x, y: 0))
+    bitmapContext.addLine(to: CGPoint(x: origin.x, y: size.height))  // y axis
+    bitmapContext.strokePath()
+    
+    xticks.dropFirst().forEach {
+        // tick
+        bitmapContext.move(to: CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y))
+        bitmapContext.addLine(to: CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y+6))
+        bitmapContext.strokePath()
+        // tick label
+        let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
+                                                  $0.description as NSString,
+                                                  attributes)
+        let textLine = CTLineCreateWithAttributedString(attrString!)
+        let labelSize = CTLineGetImageBounds(textLine, bitmapContext)
+        bitmapContext.textPosition = CGPoint(
+            x: CGPoint(x: $0, y: 0).applying(transform).x - labelSize.width/2,
+            y: origin.y - labelSize.height-4
+        )
+        CTLineDraw(textLine, bitmapContext)
         
-        ctx.beginPath()
+    }
+    yticks.dropFirst().forEach {
+        // tick
+        bitmapContext.move(to: CGPoint(x: origin.x, y: CGPoint(x: 0, y: $0).applying(transform).y))
+        bitmapContext.addLine(to: CGPoint(x: origin.x+6, y: CGPoint(x: 0, y: $0).applying(transform).y))
+        bitmapContext.strokePath()
+        // tick label
+        let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
+                                                  $0.description as NSString,
+                                                  attributes)
+        let textLine = CTLineCreateWithAttributedString(attrString!)
+        let labelSize = CTLineGetImageBounds(textLine, bitmapContext)
+        bitmapContext.textPosition = CGPoint(
+            x: origin.x - labelSize.width-4,
+            y: CGPoint(x: 0, y: $0).applying(transform).y - labelSize.height/2
+        )
+        CTLineDraw(textLine, bitmapContext)
         
-        let origin = CGPoint.zero.applying(transform)
-        
-        ctx.move(to: CGPoint(x: 0, y: origin.y))  // x axis
-        ctx.addLine(to: CGPoint(x: size.width, y: origin.y))
-        ctx.move(to: CGPoint(x: origin.x, y: 0))
-        ctx.addLine(to: CGPoint(x: origin.x, y: size.height))  // y axis
-        ctx.strokePath()
-        
-        xticks.dropFirst().forEach {
-            // tick
-            ctx.move(to: CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y))
-            ctx.addLine(to: CGPoint(x: CGPoint(x: $0, y: 0).applying(transform).x, y: origin.y+6))
-            ctx.strokePath()
-            // tick label
-            let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
-                                                      $0.description as NSString,
-                                                      attributes)
-            let textLine = CTLineCreateWithAttributedString(attrString!)
-            let labelSize = CTLineGetImageBounds(textLine, ctx)
-            ctx.textPosition = CGPoint(
-                x: CGPoint(x: $0, y: 0).applying(transform).x - labelSize.width/2,
-                y: origin.y - labelSize.height-4
-            )
-            CTLineDraw(textLine, ctx)
-            
-        }
-        yticks.dropFirst().forEach {
-            // tick
-            ctx.move(to: CGPoint(x: origin.x, y: CGPoint(x: 0, y: $0).applying(transform).y))
-            ctx.addLine(to: CGPoint(x: origin.x+6, y: CGPoint(x: 0, y: $0).applying(transform).y))
-            ctx.strokePath()
-            // tick label
-            let attrString = CFAttributedStringCreate(kCFAllocatorDefault,
-                                                      $0.description as NSString,
-                                                      attributes)
-            let textLine = CTLineCreateWithAttributedString(attrString!)
-            let labelSize = CTLineGetImageBounds(textLine, ctx)
-            ctx.textPosition = CGPoint(
-                x: origin.x - labelSize.width-4,
-                y: CGPoint(x: 0, y: $0).applying(transform).y - labelSize.height/2
-            )
-            CTLineDraw(textLine, ctx)
-            
-        }
     }
     
     // DRAW POINTS
     
     let points = x.indices.map { CGPoint(x: x[$0], y: y[$0]) }
     
-    bitmapContext?.setFillColor(plotColor)
-    bitmapContext?.setStrokeColor(plotColor)
-    bitmapContext?.setLineWidth(2) // default is 1
+    bitmapContext.setFillColor(plotColor)
+    bitmapContext.setStrokeColor(plotColor)
+    bitmapContext.setLineWidth(2) // default is 1
     
-    if let ctx = bitmapContext {
-        if let connected = options[.connected] as? Bool {
-            if connected {
-                points.dropLast().indices.forEach {
-                    (i) in
-                    ctx.beginPath()
-                    ctx.move(to: points[i].applying(transform))
-                    ctx.addLine(to: points[i+1].applying(transform))
-                    ctx.strokePath()
-                }
+    if let connected = options[.connected] as? Bool {
+        if connected {
+            points.dropLast().indices.forEach {
+                (i) in
+                bitmapContext.beginPath()
+                bitmapContext.move(to: points[i].applying(transform))
+                bitmapContext.addLine(to: points[i+1].applying(transform))
+                bitmapContext.strokePath()
             }
         }
-        points.forEach {
-            (p) in
-            ctx.beginPath()
-            ctx.addArc(center: p.applying(transform), radius: 3, startAngle: 0, endAngle: 2*CGFloat.pi, clockwise: true)
-            ctx.closePath()
-            ctx.drawPath(using: .eoFillStroke)
-        }
+    }
+    points.forEach {
+        (p) in
+        bitmapContext.beginPath()
+        bitmapContext.addArc(center: p.applying(transform), radius: 3, startAngle: 0, endAngle: 2*CGFloat.pi, clockwise: true)
+        bitmapContext.closePath()
+        bitmapContext.drawPath(using: .eoFillStroke)
     }
     
-    return bitmapContext?.makeImage()
 }
