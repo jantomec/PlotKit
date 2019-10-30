@@ -3,18 +3,24 @@ import Foundation
 import CoreGraphics
 
 
-public func plot(x: [CGFloat], y: [CGFloat], size: CGSize, connected: Bool = false) -> CGImage? {
+public func plot(x: [CGFloat], y: [CGFloat], size: CGSize,
+                 connected: Bool = false, context: CGContext? = nil) -> CGImage? {
     
-    let bitsPerComponent = 8
-    let bytesPerRow = 0 // 0 means automatic calculation if data == nil
+    let bitmapContext: CGContext?
     let colorSpace = CGColorSpaceCreateDeviceRGB()
-    let bitmapContext = CGContext(data: nil,
+    if context == nil {
+        let bitsPerComponent = 8
+        let bytesPerRow = 0 // 0 means automatic calculation if data == nil
+        bitmapContext = CGContext(data: nil,
                                   width: Int(size.width),
                                   height: Int(size.height),
                                   bitsPerComponent: Int(bitsPerComponent),
                                   bytesPerRow: Int(bytesPerRow),
                                   space: colorSpace,
                                   bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+    } else {
+        bitmapContext = context
+    }
     
     // PREFERENCES - colors, fonts, ...
     
