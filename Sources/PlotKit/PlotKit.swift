@@ -36,7 +36,9 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize,
     let attributes = [kCTFontAttributeName : font] as CFDictionary
     
     // ANNOTATIONS - labels, legends, ticks...
-    let (xticks, yticks) = ticks(dataX: x, y: y)
+    let (xticks, yticks) = ticks(dataX: x, y: y,
+                                 xlimit: options[.xlimit] as? (CGFloat, CGFloat),
+                                 ylimit: options[.ylimit] as? (CGFloat, CGFloat))
     
     let tallestXtickLabel: CGFloat
     let widestYtickLabel: CGFloat
@@ -64,8 +66,11 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize,
     
     // TRANSFORMATION OF COORDINATES
     
-    let transform = fitTransform(dataX: x, y: y, size: size, padding: CGVector(dx: widestYtickLabel,
-                                                                               dy: tallestXtickLabel))
+    let transform = fitTransform(dataX: x, y: y,
+                                 size: size,
+                                 padding: CGVector(dx: widestYtickLabel, dy: tallestXtickLabel),
+                                 xlimit: options[.xlimit] as? (CGFloat, CGFloat),
+                                 ylimit: options[.ylimit] as? (CGFloat, CGFloat))
     
     // AXES
     
