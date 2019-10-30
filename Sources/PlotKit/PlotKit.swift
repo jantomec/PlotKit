@@ -2,6 +2,26 @@ import Foundation
 import CoreGraphics
 import CoreText
 
+/// Plot data with two lists of x and y values.
+///
+/// This function takes in two lists of values which combined represents points to be drawn. Also take a look at `PKPlotOptions` to see how to adapt image ouput.
+///
+/// Usage:
+///
+///     let x: [CGFloat] = linspace(from: 0, to: 10, n: 31)
+///     let y = x.map { pow($0, 2) }
+///
+///     let opts: [PKPlotOption : Any] = [
+///         .connected : true,
+///         .ylimit : (CGFloat(0), CGFloat(120))
+///     ]
+///
+///     let graph = plot(x: x, y: y, size: imageView!.frame.size, options: opts)
+/// - Parameter x: Values on abscissa
+/// - Parameter y: Values on ordinate
+/// - Parameter size: Size of image created
+/// - Parameter options: Additional options for personalizing output image
+/// - Returns: Image of plot as CGImage optional
 public func plot(x: [CGFloat], y: [CGFloat], size: CGSize,
                  options: [PKPlotOption : Any] = [:]) -> CGImage? {
     
