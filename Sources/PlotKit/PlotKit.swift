@@ -2,9 +2,8 @@ import CoreText
 import Foundation
 import CoreGraphics
 
-
 public func plot(x: [CGFloat], y: [CGFloat], size: CGSize,
-                 connected: Bool = false, context: CGContext? = nil) -> CGImage? {
+                 options: [PKPlotOption : Any] = [:], context: CGContext? = nil) -> CGImage? {
     
     let bitmapContext: CGContext?
     let colorSpace = CGColorSpaceCreateDeviceRGB()
@@ -132,13 +131,15 @@ public func plot(x: [CGFloat], y: [CGFloat], size: CGSize,
     bitmapContext?.setLineWidth(2) // default is 1
     
     if let ctx = bitmapContext {
-        if connected {
-            points.dropLast().indices.forEach {
-                (i) in
-                ctx.beginPath()
-                ctx.move(to: points[i].applying(transform))
-                ctx.addLine(to: points[i+1].applying(transform))
-                ctx.strokePath()
+        if let connected = options[.connected] as? Bool {
+            if connected {
+                points.dropLast().indices.forEach {
+                    (i) in
+                    ctx.beginPath()
+                    ctx.move(to: points[i].applying(transform))
+                    ctx.addLine(to: points[i+1].applying(transform))
+                    ctx.strokePath()
+                }
             }
         }
         points.forEach {
